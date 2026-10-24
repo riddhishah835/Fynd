@@ -7,7 +7,12 @@ export function validate(schema, source = 'body') {
       return;
     }
 
-    req[source] = result.data;
+    Object.defineProperty(req, source, {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: result.data,
+    });
     next();
   };
 }
