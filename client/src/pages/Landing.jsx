@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react';
 import api from '../api/axios.js';
 import ErrorBox from '../components/ErrorBox.jsx';
 import Loader from '../components/Loader.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { getDashboardPath } from '../utils/helpers.js';
+import { Link } from 'react-router-dom';
 
 export default function Landing() {
   const [loading, setLoading] = useState(true);
   const [databaseStatus, setDatabaseStatus] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const { user } = useAuth();
 
   useEffect(() => {
     api
@@ -31,6 +35,21 @@ export default function Landing() {
           sponsors. It gives both sides a simple place to discover opportunities and build
           sponsorship partnerships.
         </p>
+        {user ? (
+          <Link
+            className="inline-block rounded bg-blue-700 px-4 py-2 font-medium text-white"
+            to={getDashboardPath(user.role)}
+          >
+            Go to dashboard
+          </Link>
+        ) : (
+          <Link
+            className="inline-block rounded bg-blue-700 px-4 py-2 font-medium text-white"
+            to="/signup"
+          >
+            Get started
+          </Link>
+        )}
       </div>
 
       <div className="space-y-2">
