@@ -70,6 +70,7 @@ Fynd/
   client/
     .env.example
     src/
+
       main.jsx
       App.jsx
       api/axios.js         (axios instance, withCredentials)
@@ -90,7 +91,8 @@ Fynd/
   server/
     .env.example
     src/
-      index.js             (express app + http server + socket.io)
+    app.js(express app, exported for tests)
+      index.js             (creates http server, socket.io, connects DB, starts listening)
       config/db.js
       config/env.js
       models/              (User, Event, Proposal, Message, Deliverable, Notification)
@@ -313,6 +315,7 @@ CLIENT_URL=http://localhost:5173
 GROQ_API_KEY=
 GROQ_BASE_URL=https://api.groq.com/openai/v1
 LLM_MODEL=llama-3.3-70b-versatile
+LLM_FALLBACK_MODEL=llama-3.1-8b-instant
 GEMINI_API_KEY=
 EMBEDDING_MODEL=
 CLOUDINARY_CLOUD_NAME=
