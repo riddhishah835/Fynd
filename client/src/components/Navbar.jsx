@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getDashboardPath } from '../utils/helpers.js';
 import ErrorBox from './ErrorBox.jsx';
+import { useNotifications } from '../context/NotificationContext.jsx';
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth();
+  const { unreadCount } = useNotifications();
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
@@ -38,6 +40,17 @@ export default function Navbar() {
                   </Link>
                   <Link className="text-gray-700 hover:text-gray-900" to="/events">
                     {user.role === 'organizer' ? 'Browse events' : 'Discover'}
+                  </Link>
+                  <Link className="text-gray-700 hover:text-gray-900" to="/proposals">
+                    {user.role === 'organizer' ? 'Proposals' : 'My proposals'}
+                  </Link>
+                  <Link className="flex items-center gap-1 text-gray-700 hover:text-gray-900" to="/notifications">
+                    Notifications
+                    {unreadCount > 0 && (
+                      <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-xs text-white">
+                        {unreadCount}
+                      </span>
+                    )}
                   </Link>
                   <span className="text-gray-700">{user.name}</span>
                   <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700">

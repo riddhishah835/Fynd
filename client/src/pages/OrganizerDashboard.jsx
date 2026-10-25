@@ -13,6 +13,9 @@ export default function OrganizerDashboard() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [actionError, setActionError] = useState('');
+  const [pendingProposalCount, setPendingProposalCount] = useState(0);
+  const [proposalsLoading, setProposalsLoading] = useState(true);
+  const [proposalsError, setProposalsError] = useState('');
 
   const loadEvents = useCallback(async () => {
     setErrorMessage('');
@@ -29,6 +32,24 @@ export default function OrganizerDashboard() {
   useEffect(() => {
     loadEvents();
   }, [loadEvents]);
+
+  useEffect(() => {
+    let active = true;
+    api.get('/proposals', { params: { status: 'pending' } })
+      .then(({ data }) => {
+        if (active) setPendingProposalCount(data.proposals.length);
+      })
+      .catch((error) => {
+        if (active) setProposalsError(error.message);
+      })
+      .finally(() => {
+        if (active) setProposalsLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const publish = async (eventId) => {
     setActionError('');
@@ -65,6 +86,17 @@ export default function OrganizerDashboard() {
           Create event
         </Link>
       </div>
+
+      <section className="rounded border border-gray-200 bg-white p-4">
+        <h2 className="font-semibold">Needs your response</h2>
+        {proposalsLoading && <Loader />}
+        {!proposalsLoading && proposalsError && <ErrorBox message={proposalsError} />}
+        {!proposalsLoading && !proposalsError && (
+          <Link className="mt-1 inline-block text-blue-700 underline" to="/proposals?status=pending">
+            {pendingProposalCount} pending {pendingProposalCount === 1 ? 'proposal' : 'proposals'}
+          </Link>
+        )}
+      </section>
 
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">My events</h2>

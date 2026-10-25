@@ -10,6 +10,9 @@ import EventDetail from './pages/EventDetail.jsx';
 import Events from './pages/Events.jsx';
 import Signup from './pages/Signup.jsx';
 import SponsorDashboard from './pages/SponsorDashboard.jsx';
+import Proposals from './pages/Proposals.jsx';
+import ProposalDetail from './pages/ProposalDetail.jsx';
+import Notifications from './pages/Notifications.jsx';
 
 export default function App() {
   return (
@@ -65,6 +68,30 @@ export default function App() {
             element={
               <ProtectedRoute roles={['organizer']}>
                 <EventForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proposals"
+            element={
+              <ProtectedRoute>
+                <Proposals />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proposals/:id"
+            element={
+              <ProtectedRoute>
+                <ProposalDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
               </ProtectedRoute>
             }
           />

@@ -5,6 +5,7 @@ import Empty from '../components/Empty.jsx';
 import ErrorBox from '../components/ErrorBox.jsx';
 import Loader from '../components/Loader.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
+import SendProposalForm from '../components/SendProposalForm.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { formatDateRange, formatINR } from '../utils/helpers.js';
 
@@ -131,17 +132,8 @@ export default function EventDetail() {
                 <ul className="list-inside list-disc text-sm text-gray-700">
                   {tier.benefits.map((benefit, index) => <li key={`${tier._id}-${index}`}>{benefit}</li>)}
                 </ul>
-                {!ownsEvent && user.role === 'sponsor' && slotsLeft > 0 && (
-                  <button
-                    className="rounded border border-gray-300 px-3 py-2 text-sm text-gray-500"
-                    disabled
-                    type="button"
-                  >
-                    Send proposal (coming soon)
-                  </button>
-                )}
-                {!ownsEvent && user.role === 'sponsor' && slotsLeft === 0 && (
-                  <p className="text-sm font-medium text-red-700">Sold out</p>
+                {!ownsEvent && user.role === 'sponsor' && (
+                  <SendProposalForm eventId={event._id} tier={tier} />
                 )}
               </div>
             );
