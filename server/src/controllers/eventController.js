@@ -1,4 +1,5 @@
 import Event from '../models/Event.js';
+import Proposal from '../models/Proposal.js';
 import AppError from '../utils/AppError.js';
 import {
   applyTierUpdate,
@@ -102,7 +103,7 @@ export async function updateEvent(req, res, next) {
       throw new AppError('VALIDATION_ERROR', 'endDate must be on or after startDate');
     }
     if (tiers !== undefined) {
-      applyTierUpdate(req.event, tiers);
+      await applyTierUpdate(req.event, tiers);
     }
 
     await req.event.save();
@@ -134,7 +135,14 @@ export async function deleteEvent(req, res, next) {
       throw new AppError('CONFLICT', 'Cannot delete an event with accepted proposals');
     }
 
-    // TODO: also refuse if any non-terminal proposals exist once proposals are built
+    const activeProposal = await Proposal.exists({
+      event: req.event._id,
+      status: { $in: ['pending', 'countered', 'accepted'] },
+    });
+    if (activeProposal) {
+      throw new AppError('CONFLICT', 'Cannot delete an event with active proposals');
+    }
+
     await req.event.deleteOne();
     res.json({ message: 'Event deleted' });
   } catch (error) {

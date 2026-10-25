@@ -113,6 +113,7 @@ Fynd/
 ```
 
 ## 5. Data Model (Mongoose)
+tierSnapshot: { name, price, benefits[] }, copied from the tier when the proposal is created, because tiers can be edited later.
 
 **User**
 

@@ -1,4 +1,5 @@
 import AppError from '../utils/AppError.js';
+import Proposal from '../models/Proposal.js';
 
 export function assertOwner(event, user) {
   if (event.organizer._id?.toString?.() !== user._id.toString()
@@ -7,11 +8,19 @@ export function assertOwner(event, user) {
   }
 }
 
-export function applyTierUpdate(event, incomingTiers) {
+export async function applyTierUpdate(event, incomingTiers) {
   const currentTiers = event.tiers;
   const tiersById = new Map(currentTiers.map((tier) => [tier._id.toString(), tier]));
   const retainedIds = new Set();
   const newTiers = [];
+  const currentTierIds = currentTiers.map((tier) => tier._id);
+  const activeTierIds = new Set(
+    (await Proposal.distinct('tierId', {
+      event: event._id,
+      tierId: { $in: currentTierIds },
+      status: { $in: ['pending', 'countered'] },
+    })).map((tierId) => tierId.toString()),
+  );
 
   for (const incoming of incomingTiers) {
     if (!incoming._id) {
@@ -26,6 +35,13 @@ export function applyTierUpdate(event, incomingTiers) {
 
     retainedIds.add(incoming._id);
 
+    if (
+      activeTierIds.has(incoming._id) &&
+      incoming.price !== undefined &&
+      incoming.price !== current.price
+    ) {
+      throw new AppError('CONFLICT', 'Cannot change the price of a tier with active proposals');
+    }
     if (current.slotsFilled > 0) {
       if (incoming.price !== undefined && incoming.price !== current.price) {
         throw new AppError('CONFLICT', 'Cannot change the price of a tier with accepted proposals');
@@ -43,6 +59,9 @@ export function applyTierUpdate(event, incomingTiers) {
   }
 
   for (const current of currentTiers) {
+    if (!retainedIds.has(current._id.toString()) && activeTierIds.has(current._id.toString())) {
+      throw new AppError('CONFLICT', 'Cannot remove a tier with active proposals');
+    }
     if (!retainedIds.has(current._id.toString()) && current.slotsFilled > 0) {
       throw new AppError('CONFLICT', 'Cannot remove a tier with accepted proposals');
     }
