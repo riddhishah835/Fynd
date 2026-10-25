@@ -60,6 +60,8 @@ Two roles chosen at signup, fixed afterwards: `organizer` and `sponsor`. Separat
 
 **Free-tier limits change.** Verify current limits and model names before relying on them.
 
+In production the client calls the API through a Vercel rewrite at /api (same-origin), so VITE_API_URL=/api in production. Socket.io connects directly to the Render URL via VITE_SOCKET_URL.
+
 ## 4. Repository Structure
 
 ```text
