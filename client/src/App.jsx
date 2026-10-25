@@ -5,6 +5,9 @@ import Landing from './pages/Landing.jsx';
 import Login from './pages/Login.jsx';
 import NotFound from './pages/NotFound.jsx';
 import OrganizerDashboard from './pages/OrganizerDashboard.jsx';
+import EventForm from './pages/EventForm.jsx';
+import EventDetail from './pages/EventDetail.jsx';
+import Events from './pages/Events.jsx';
 import Signup from './pages/Signup.jsx';
 import SponsorDashboard from './pages/SponsorDashboard.jsx';
 
@@ -30,6 +33,38 @@ export default function App() {
             element={
               <ProtectedRoute roles={['sponsor']}>
                 <SponsorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/events"
+            element={
+              <ProtectedRoute>
+                <Events />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/events/:id"
+            element={
+              <ProtectedRoute>
+                <EventDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/organizer/events/new"
+            element={
+              <ProtectedRoute roles={['organizer']}>
+                <EventForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/organizer/events/:id/edit"
+            element={
+              <ProtectedRoute roles={['organizer']}>
+                <EventForm />
               </ProtectedRoute>
             }
           />

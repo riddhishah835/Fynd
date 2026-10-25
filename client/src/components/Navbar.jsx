@@ -36,6 +36,9 @@ export default function Navbar() {
                   >
                     Dashboard
                   </Link>
+                  <Link className="text-gray-700 hover:text-gray-900" to="/events">
+                    {user.role === 'organizer' ? 'Browse events' : 'Discover'}
+                  </Link>
                   <span className="text-gray-700">{user.name}</span>
                   <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700">
                     {user.role}

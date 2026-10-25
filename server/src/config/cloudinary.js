@@ -20,23 +20,46 @@ export function uploadBanner(buffer) {
   if (!cloudinaryConfigured) {
     throw new AppError('SERVER_ERROR', 'Image uploads are not configured', 503);
   }
+  if (!Buffer.isBuffer(buffer) || buffer.length === 0) {
+    throw new AppError('VALIDATION_ERROR', 'A non-empty image file is required');
+  }
 
   return new Promise((resolve, reject) => {
     try {
       const stream = cloudinary.uploader.upload_stream(
         { folder: 'fynd/banners', resource_type: 'image' },
         (error, result) => {
-          if (error || !result?.secure_url) {
+          if (error) {
+            console.error('Cloudinary banner upload failed:', {
+              message: error.message,
+              http_code: error.http_code,
+              name: error.name,
+            });
+            const uploadError = new AppError('SERVER_ERROR', 'Image upload failed', 502);
+            uploadError.cloudinaryError = error;
+            reject(uploadError);
+            return;
+          }
+
+          if (!result?.secure_url) {
             reject(new AppError('SERVER_ERROR', 'Image upload failed', 502));
             return;
           }
+
           resolve(result.secure_url);
         },
       );
 
       stream.end(buffer);
-    } catch {
-      reject(new AppError('SERVER_ERROR', 'Image upload failed', 502));
+    } catch (error) {
+      console.error('Cloudinary banner upload failed:', {
+        message: error.message,
+        http_code: error.http_code,
+        name: error.name,
+      });
+      const uploadError = new AppError('SERVER_ERROR', 'Image upload failed', 502);
+      uploadError.cloudinaryError = error;
+      reject(uploadError);
     }
   });
 }

@@ -15,9 +15,9 @@ const envSchema = z.object({
   LLM_FALLBACK_MODEL: z.string().optional(),
   GEMINI_API_KEY: z.string().optional(),
   EMBEDDING_MODEL: z.string().optional(),
-  CLOUDINARY_CLOUD_NAME: z.string().optional(),
-  CLOUDINARY_API_KEY: z.string().optional(),
-  CLOUDINARY_API_SECRET: z.string().optional(),
+  CLOUDINARY_CLOUD_NAME: z.string().trim().optional(),
+  CLOUDINARY_API_KEY: z.string().trim().optional(),
+  CLOUDINARY_API_SECRET: z.string().trim().optional(),
 });
 
 const result = envSchema.safeParse(process.env);

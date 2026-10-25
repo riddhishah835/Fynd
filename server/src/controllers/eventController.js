@@ -144,14 +144,21 @@ export async function deleteEvent(req, res, next) {
 
 export async function uploadEventBanner(req, res, next) {
   try {
-    if (!req.file) {
-      throw new AppError('VALIDATION_ERROR', 'An image file is required');
+    if (!req.file || !Buffer.isBuffer(req.file.buffer) || req.file.buffer.length === 0) {
+      throw new AppError('VALIDATION_ERROR', 'A non-empty image file is required');
     }
 
     req.event.bannerUrl = await uploadBanner(req.file.buffer);
     await req.event.save();
     res.json({ event: req.event });
   } catch (error) {
+    if (error.cloudinaryError) {
+      console.error('Cloudinary banner upload failed:', {
+        message: error.cloudinaryError.message,
+        http_code: error.cloudinaryError.http_code,
+        name: error.cloudinaryError.name,
+      });
+    }
     next(error);
   }
 }
