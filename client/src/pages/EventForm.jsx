@@ -45,6 +45,11 @@ export default function EventForm() {
   const [errors, setErrors] = useState({});
   const [errorDetails, setErrorDetails] = useState([]);
   const [bannerUrl, setBannerUrl] = useState('');
+  const [showAiPrefill, setShowAiPrefill] = useState(false);
+  const [aiText, setAiText] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+  const [aiFilled, setAiFilled] = useState(false);
 
   useEffect(() => {
     if (!isEditing) return;
@@ -125,6 +130,58 @@ export default function EventForm() {
       ...current,
       tiers: current.tiers.filter((_, tierIndex) => tierIndex !== index),
     }));
+  };
+
+  const autoFillWithAI = async () => {
+    setAiLoading(true);
+    setAiError('');
+    setAiFilled(false);
+    try {
+      const { data } = await api.post('/ai/extract-event', { text: aiText });
+      const extracted = data.event;
+      const description = typeof extracted.description === 'string'
+        && extracted.description.trim()
+        ? extracted.description
+        : aiText.trim();
+      setForm((current) => {
+        const updates = {};
+        for (const field of [
+          'title',
+          'description',
+          'category',
+          'city',
+          'venue',
+          'startDate',
+          'endDate',
+          'expectedFootfall',
+          'audienceProfile',
+        ]) {
+          if (field === 'description') {
+            updates.description = description.slice(0, 3000);
+          } else if (extracted[field] !== undefined && extracted[field] !== null) {
+            updates[field] = field === 'expectedFootfall'
+              ? String(extracted[field])
+              : extracted[field];
+          }
+        }
+
+        if (current.tiers.length === 0 && Array.isArray(extracted.tiers)) {
+          updates.tiers = extracted.tiers.map((tier) => ({
+            name: tier.name ?? '',
+            price: tier.price === null || tier.price === undefined ? '' : String(tier.price),
+            slots: tier.slots === null || tier.slots === undefined ? '1' : String(tier.slots),
+            slotsFilled: 0,
+            benefitsText: Array.isArray(tier.benefits) ? tier.benefits.join('\n') : '',
+          }));
+        }
+        return { ...current, ...updates };
+      });
+      setAiFilled(true);
+    } catch (error) {
+      setAiError(error.message);
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const saveEvent = async (event) => {
@@ -271,7 +328,48 @@ export default function EventForm() {
           </label>
         </div>
 
-        {/* TODO: Auto-fill from description (AI) button goes here in the AI milestone. */}
+        {!isEditing && (
+          <section className="rounded border border-gray-200 bg-white p-4">
+            <button
+              aria-expanded={showAiPrefill}
+              className="font-medium text-blue-700 underline"
+              onClick={() => setShowAiPrefill((current) => !current)}
+              type="button"
+            >
+              Auto-fill from description (AI)
+            </button>
+            {showAiPrefill && (
+              <div className="mt-3 space-y-3">
+                <label className="block text-sm font-medium" htmlFor="ai-event-text">
+                  Paste your event description or poster text
+                  <textarea
+                    className={inputClass}
+                    id="ai-event-text"
+                    maxLength={5000}
+                    onChange={(event) => setAiText(event.target.value)}
+                    rows={5}
+                    value={aiText}
+                  />
+                </label>
+                <p className="text-xs text-gray-600">{aiText.length}/5000 characters (minimum 30)</p>
+                {aiError && <ErrorBox message={aiError} />}
+                {aiFilled && (
+                  <p className="text-sm text-green-800">
+                    AI-filled. Please review every field before saving.
+                  </p>
+                )}
+                <button
+                  className="rounded border border-blue-700 px-3 py-2 text-sm text-blue-700 disabled:opacity-50"
+                  disabled={aiLoading || aiText.trim().length < 30 || aiText.trim().length > 5000}
+                  onClick={autoFillWithAI}
+                  type="button"
+                >
+                  {aiLoading ? 'Filling...' : 'Auto-fill with AI'}
+                </button>
+              </div>
+            )}
+          </section>
+        )}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Sponsorship tiers</h2>

@@ -10,6 +10,7 @@ import eventRoutes from './routes/eventRoutes.js';
 import proposalRoutes from './routes/proposalRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import deliverableRoutes from './routes/deliverableRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -36,6 +37,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/proposals', proposalRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/deliverables', deliverableRoutes);
+app.use('/api/ai', aiRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

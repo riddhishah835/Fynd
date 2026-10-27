@@ -190,6 +190,7 @@ Implementation requirements:
 ## 8. AI Features (exactly these four)
 
 All AI calls go through `llm.js`. Every AI endpoint must: require auth, be rate limited (10 requests per minute per user), time out after 20 seconds, and return a clean error with a fallback message if the provider fails. The app must remain fully usable if AI is down.
+LLM service behavior: llm.js retries once on LLM_FALLBACK_MODEL when the primary model returns 429 or a 5xx. All AI failures surface as 503 AI_UNAVAILABLE. Prompts must stay small (Groq free tier is about 12K tokens per minute). AI output is never trusted blindly: it is validated with Zod, and the proposal drafter output must fit the 1000-character message limit.
 
 ### 8.1 Proposal Drafter (sponsor)
 

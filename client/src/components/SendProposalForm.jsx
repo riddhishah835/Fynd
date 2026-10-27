@@ -11,6 +11,9 @@ export default function SendProposalForm({ eventId, tier }) {
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [tone, setTone] = useState('professional');
+  const [drafting, setDrafting] = useState(false);
+  const [draftError, setDraftError] = useState('');
   const navigate = useNavigate();
   const slotsLeft = tier.slots - tier.slotsFilled;
 
@@ -37,6 +40,28 @@ export default function SendProposalForm({ eventId, tier }) {
       }
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const draftWithAI = async () => {
+    if (message.trim() && !window.confirm('Replace your current message with the AI draft?')) {
+      return;
+    }
+
+    setDrafting(true);
+    setDraftError('');
+    try {
+      const { data } = await api.post('/ai/draft-proposal', {
+        eventId,
+        tierId: tier._id,
+        tone,
+      });
+      setMessage(data.draft);
+      setErrors((current) => ({ ...current, message: '' }));
+    } catch (error) {
+      setDraftError(error.message);
+    } finally {
+      setDrafting(false);
     }
   };
 
@@ -104,7 +129,30 @@ export default function SendProposalForm({ eventId, tier }) {
             <span className="mt-1 block text-xs text-gray-600">{message.length}/1000 characters</span>
             {errors.message && <span className="mt-1 block text-red-700">{errors.message}</span>}
           </label>
-          {/* TODO: Draft with AI button goes here in the AI milestone. */}
+          <div className="flex flex-wrap items-end gap-2">
+            <label className="text-sm font-medium" htmlFor={`tone-${tier._id}`}>
+              Draft tone
+              <select
+                className="mt-1 block rounded border border-gray-300 px-3 py-2"
+                id={`tone-${tier._id}`}
+                onChange={(event) => setTone(event.target.value)}
+                value={tone}
+              >
+                <option value="professional">Professional</option>
+                <option value="friendly">Friendly</option>
+                <option value="concise">Concise</option>
+              </select>
+            </label>
+            <button
+              className="rounded border border-blue-700 px-3 py-2 text-sm text-blue-700 disabled:opacity-60"
+              disabled={drafting}
+              onClick={draftWithAI}
+              type="button"
+            >
+              {drafting ? 'Drafting...' : 'Draft with AI'}
+            </button>
+          </div>
+          {draftError && <ErrorBox message={draftError} />}
           <div className="flex gap-2">
             <button
               className="rounded bg-blue-700 px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
