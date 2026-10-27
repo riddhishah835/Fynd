@@ -36,6 +36,10 @@ export default function Events() {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [recommendations, setRecommendations] = useState([]);
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const hasActiveFilters = ['q', 'city', 'category', 'from', 'to', 'maxPrice', 'minFootfall']
+    .some((key) => Boolean(searchParams.get(key)));
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -55,6 +59,31 @@ export default function Events() {
   useEffect(() => {
     loadEvents();
   }, [loadEvents]);
+
+  useEffect(() => {
+    if (user?.role !== 'sponsor' || hasActiveFilters) {
+      setRecommendations([]);
+      setRecommendationsLoading(false);
+      return undefined;
+    }
+
+    let active = true;
+    setRecommendationsLoading(true);
+    api.get('/ai/matches')
+      .then(({ data }) => {
+        if (active) setRecommendations(data.matches?.slice(0, 5) ?? []);
+      })
+      .catch(() => {
+        if (active) setRecommendations([]);
+      })
+      .finally(() => {
+        if (active) setRecommendationsLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [hasActiveFilters, user?.role]);
 
   const updateFilter = (event) => {
     const { name, value } = event.target;
@@ -88,10 +117,25 @@ export default function Events() {
 
   return (
     <section className="space-y-6">
-      {user.role === 'sponsor' && (
+      {user?.role === 'sponsor'
+        && !hasActiveFilters
+        && (recommendationsLoading || recommendations.length > 0) && (
         <section aria-label="Recommended for you" className="space-y-2">
           <h2 className="text-xl font-semibold">Recommended for you</h2>
-          {/* Filled in AI milestone. */}
+          {recommendationsLoading && <Loader />}
+          {!recommendationsLoading && recommendations.length > 0 && (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {recommendations.map((match) => (
+                <div className="space-y-2" key={match.event._id}>
+                  <p className="text-right text-sm font-semibold text-blue-800">
+                    {match.score}% match
+                  </p>
+                  <EventCard event={match.event} to={`/events/${match.event._id}`} />
+                  <p className="text-sm text-gray-600">{match.reason}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       )}
 

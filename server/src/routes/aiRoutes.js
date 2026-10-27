@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { draft, extract } from '../controllers/aiController.js';
+import { draft, extract, matches } from '../controllers/aiController.js';
 import aiRateLimit from '../middleware/aiRateLimit.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
@@ -26,5 +26,6 @@ router.post(
   validate(extractEventSchema),
   extract,
 );
+router.get('/matches', requireAuth, requireRole('sponsor'), aiRateLimit, matches);
 
 export default router;

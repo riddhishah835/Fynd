@@ -161,3 +161,70 @@ export async function chatJSON({ messages, schema, ...options }) {
   console.error('LLM returned invalid JSON after retry');
   throw new AppError('AI_UNAVAILABLE', unavailableMessage, 503);
 }
+
+const embeddingUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
+
+function isRetryableEmbeddingStatus(status) {
+  return status === 429 || (status >= 500 && status <= 599);
+}
+
+export async function embed(text, taskType) {
+  let lastError;
+
+  if (!config.geminiApiKey) {
+    lastError = new Error('GEMINI_API_KEY is not configured');
+  } else {
+    const url = `${embeddingUrl}/${encodeURIComponent(config.embeddingModel)}:embedContent`;
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15_000);
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': config.geminiApiKey,
+          },
+          body: JSON.stringify({
+            content: { parts: [{ text }] },
+            taskType,
+            outputDimensionality: config.embeddingDimensions,
+          }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          const error = new Error(`Gemini embedding request failed with status ${response.status}`);
+          error.status = response.status;
+          throw error;
+        }
+
+        const data = await response.json();
+        const values = data.embedding?.values;
+        if (!Array.isArray(values) || values.length !== config.embeddingDimensions) {
+          throw new Error(
+            `Gemini returned an invalid embedding dimension; expected ${config.embeddingDimensions}`,
+          );
+        }
+        return values;
+      } catch (error) {
+        lastError = error;
+        if (attempt === 0 && isRetryableEmbeddingStatus(error.status)) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          continue;
+        }
+        break;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+  }
+
+  console.error('Gemini embedding request failed:', {
+    message: lastError.message,
+    status: lastError.status,
+  });
+  throw new AppError('AI_UNAVAILABLE', unavailableMessage, 503);
+}

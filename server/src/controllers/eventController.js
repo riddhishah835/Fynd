@@ -8,6 +8,7 @@ import {
   validateForPublish,
 } from '../services/eventService.js';
 import { uploadBanner } from '../config/cloudinary.js';
+import { embedEvent } from '../services/embeddingService.js';
 
 function populateOrganizer(query) {
   return query.populate('organizer', 'name organization city');
@@ -107,6 +108,9 @@ export async function updateEvent(req, res, next) {
     }
 
     await req.event.save();
+    if (req.event.status === 'published') {
+      void embedEvent(req.event._id);
+    }
     res.json({ event: req.event });
   } catch (error) {
     next(error);
@@ -121,8 +125,8 @@ export async function publishEvent(req, res, next) {
 
     validateForPublish(req.event);
     req.event.status = 'published';
-    // TODO: generate embedding on publish in AI milestone
     await req.event.save();
+    void embedEvent(req.event._id);
     res.json({ event: req.event });
   } catch (error) {
     next(error);

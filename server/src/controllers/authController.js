@@ -7,6 +7,8 @@ import {
   signSocketToken,
   signToken,
 } from '../utils/token.js';
+import { embedSponsor } from '../services/embeddingService.js';
+import { clearMatchCache } from '../services/matchService.js';
 
 const duplicateEmailError = () =>
   new AppError('CONFLICT', 'An account with this email already exists');
@@ -22,6 +24,9 @@ export async function signup(req, res, next) {
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.create({ ...userData, email, passwordHash });
+    if (user.role === 'sponsor') {
+      void embedSponsor(user._id);
+    }
     const token = signToken(user._id, user.role);
 
     setAuthCookie(res, token);
@@ -83,7 +88,10 @@ export async function updateProfile(req, res, next) {
     Object.assign(req.user, updates);
     await req.user.save();
 
-    // TODO: regenerate embedding for sponsors in AI milestone
+    if (req.user.role === 'sponsor') {
+      clearMatchCache(req.user._id);
+      void embedSponsor(req.user._id);
+    }
     res.json({ user: req.user });
   } catch (error) {
     next(error);

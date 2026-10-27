@@ -14,7 +14,14 @@ const envSchema = z.object({
   LLM_MODEL: z.string().optional(),
   LLM_FALLBACK_MODEL: z.string().optional(),
   GEMINI_API_KEY: z.string().optional(),
-  EMBEDDING_MODEL: z.string().optional(),
+  EMBEDDING_MODEL: z.preprocess(
+    (value) => (typeof value === 'string' && !value.trim() ? undefined : value),
+    z.string().default('gemini-embedding-001'),
+  ),
+  EMBEDDING_DIMENSIONS: z.preprocess(
+    (value) => (typeof value === 'string' && !value.trim() ? undefined : value),
+    z.coerce.number().int().positive().default(768),
+  ),
   CLOUDINARY_CLOUD_NAME: z.string().trim().optional(),
   CLOUDINARY_API_KEY: z.string().trim().optional(),
   CLOUDINARY_API_SECRET: z.string().trim().optional(),
@@ -42,6 +49,7 @@ export const config = Object.freeze({
   llmFallbackModel: result.data.LLM_FALLBACK_MODEL,
   geminiApiKey: result.data.GEMINI_API_KEY,
   embeddingModel: result.data.EMBEDDING_MODEL,
+  embeddingDimensions: result.data.EMBEDDING_DIMENSIONS,
   cloudinaryCloudName: result.data.CLOUDINARY_CLOUD_NAME,
   cloudinaryApiKey: result.data.CLOUDINARY_API_KEY,
   cloudinaryApiSecret: result.data.CLOUDINARY_API_SECRET,
