@@ -234,6 +234,7 @@ Codes: `VALIDATION_ERROR` (400), `UNAUTHENTICATED` (401), `FORBIDDEN` (403), `NO
 
 - `POST /auth/signup`: `{ name, email, password, role, organization, city, ...roleFields }`
 - `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`, `PUT /auth/profile`
+GET /auth/socket-token
 
 **Events**
 
@@ -254,7 +255,8 @@ Codes: `VALIDATION_ERROR` (400), `UNAUTHENTICATED` (401), `FORBIDDEN` (403), `NO
 **Messages**
 
 - `GET /proposals/:id/messages`, `POST /proposals/:id/messages`
-- Socket.io: client joins room `proposal:<id>` after server verifies participation via the cookie; event `message:new` is broadcast to the room.
+- Clients connect to Socket.io on the Render origin with auth: { token } from /auth/socket-token The server verifies it, then proposal:join (with an ack) verifies participation and joins room proposal:<id>. Messages are created only via REST; the server emits message:new to the room. If the socket is disconnected, the client polls GET /proposals/:id/messages?after=<ISO> every 8 seconds
+`proposal:<id>` after server verifies participation via the cookie; event `message:new` is broadcast to the room.
 
 **Deliverables**
 

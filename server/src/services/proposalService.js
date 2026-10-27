@@ -44,6 +44,14 @@ function transitionNotificationText(proposal, toStatus) {
   return `Proposal for ${tierName} was ${toStatus}`;
 }
 
+export async function assertProposalParticipant(actor, proposalId) {
+  const proposal = await Proposal.findById(proposalId);
+  if (!proposal || !isParticipant(proposal, actor)) {
+    throw new AppError('NOT_FOUND', 'Proposal not found');
+  }
+  return proposal;
+}
+
 async function reserveTierSlot(proposal) {
   const event = await Event.findById(proposal.event);
   if (!event) {

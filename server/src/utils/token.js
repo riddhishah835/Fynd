@@ -20,6 +20,14 @@ export function signToken(userId, role) {
   });
 }
 
+export function signSocketToken(userId) {
+  return jwt.sign(
+    { sub: userId.toString(), purpose: 'socket' },
+    config.jwtSecret,
+    { expiresIn: '60s' },
+  );
+}
+
 export function setAuthCookie(res, token) {
   res.cookie('token', token, authCookieOptions());
 }

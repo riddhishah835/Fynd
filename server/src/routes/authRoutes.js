@@ -3,6 +3,7 @@ import rateLimit from 'express-rate-limit';
 import { config } from '../config/env.js';
 import {
   getMe,
+  getSocketToken,
   login,
   logout,
   signup,
@@ -36,6 +37,7 @@ router.post('/signup', authLimiter, validate(signupSchema), signup);
 router.post('/login', authLimiter, validate(loginSchema), login);
 router.post('/logout', logout);
 router.get('/me', requireAuth, getMe);
+router.get('/socket-token', requireAuth, getSocketToken);
 router.put('/profile', requireAuth, validate(updateProfileSchema), updateProfile);
 
 export default router;

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import api from '../api/axios.js';
 import Empty from '../components/Empty.jsx';
 import ErrorBox from '../components/ErrorBox.jsx';
+import ChatPanel from '../components/ChatPanel.jsx';
 import Loader from '../components/Loader.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -358,11 +359,7 @@ export default function ProposalDetail() {
         </section>
       )}
 
-      <section className="space-y-2 rounded border border-gray-300 bg-white p-4">
-        <h2 className="text-lg font-semibold">Chat</h2>
-        <p className="text-sm text-gray-600">Chat coming soon</p>
-        {/* Chat component will be added with the chat milestone. */}
-      </section>
+      <ChatPanel proposalId={id} />
     </article>
   );
 }

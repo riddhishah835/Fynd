@@ -1,7 +1,12 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import AppError from '../utils/AppError.js';
-import { clearAuthCookie, setAuthCookie, signToken } from '../utils/token.js';
+import {
+  clearAuthCookie,
+  setAuthCookie,
+  signSocketToken,
+  signToken,
+} from '../utils/token.js';
 
 const duplicateEmailError = () =>
   new AppError('CONFLICT', 'An account with this email already exists');
@@ -58,6 +63,10 @@ export function logout(req, res) {
 
 export function getMe(req, res) {
   res.json({ user: req.user });
+}
+
+export function getSocketToken(req, res) {
+  res.json({ token: signSocketToken(req.user._id) });
 }
 
 export async function updateProfile(req, res, next) {
