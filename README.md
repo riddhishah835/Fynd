@@ -262,8 +262,6 @@ Do not commit `.env` files or place real credentials in this table. Start from `
 | `VITE_API_URL` | API base URL. Use the local server URL in development and `/api` when using the Vercel rewrite in production. |
 | `VITE_SOCKET_URL` | Socket.IO server origin; in production this is the Render API origin. |
 
-## Deployment
-
 ### Render API
 
 - Create a Node web service with the repository's `server` directory as its root.
