@@ -21,6 +21,12 @@ Small companies often struggle to find relevant, affordable events to sponsor. E
 
 Fynd is a two-sided sponsorship marketplace. Organizers publish events with sponsorship tiers, while sponsors discover events, send proposals, and coordinate with organizers through a shared proposal workflow that includes negotiation, chat, and deliverable tracking.
 
+### Deployment links
+
+- **Live app:** https://fynd-nu.vercel.app
+- **API:** https://fynd-wbz6.onrender.com/api/health
+- **Demo video:** https://drive.google.com/file/d/1yHE1IdJ5i-tvvwCKu0MkLKuC8uUMl61l/view?usp=sharing
+  
 ## Key Features
 
 ### Workflow 1: Onboarding
@@ -279,11 +285,6 @@ Do not commit `.env` files or place real credentials in this table. Start from `
 - Set `VITE_API_URL` to `/api` and `VITE_SOCKET_URL` to the HTTPS origin of the Render service.
 - The checked-in `client/vercel.json` rewrites `/api/:path*` to `https://fynd-wbz6.onrender.com/api/:path*` and sends other paths to `/index.html` for client-side routing. If the API is deployed at another Render URL, update the rewrite destination to that API origin. The rewrite keeps browser API requests same-origin with the Vercel app, while Socket.IO connects directly to Render.
 
-### Deployment links
-
-- **Live app:** https://fynd-nu.vercel.app
-- **API:** https://fynd-wbz6.onrender.com/api/health
-- **Demo video:** https://drive.google.com/file/d/1yHE1IdJ5i-tvvwCKu0MkLKuC8uUMl61l/view?usp=sharing
 
 ## Demo Credentials
 
