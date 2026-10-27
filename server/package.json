@@ -7,7 +7,8 @@
     "test": "vitest run",
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "backfill-embeddings": "node scripts/backfillEmbeddings.js"
+    "backfill-embeddings": "node scripts/backfillEmbeddings.js",
+    "seed": "node scripts/seed.js"
   },
   "keywords": [],
   "author": "",
