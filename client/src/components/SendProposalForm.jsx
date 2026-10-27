@@ -68,7 +68,7 @@ export default function SendProposalForm({ eventId, tier }) {
   if (slotsLeft <= 0) {
     return (
       <button
-        className="rounded border border-gray-300 px-3 py-2 text-sm text-gray-500"
+        className="btn-secondary"
         disabled
         type="button"
       >
@@ -81,7 +81,7 @@ export default function SendProposalForm({ eventId, tier }) {
     <div className="space-y-3">
       {!expanded && (
         <button
-          className="rounded bg-blue-700 px-3 py-2 text-sm font-medium text-white"
+          className="btn-primary"
           onClick={() => setExpanded(true)}
           type="button"
         >
@@ -89,21 +89,21 @@ export default function SendProposalForm({ eventId, tier }) {
         </button>
       )}
       {expanded && (
-        <form className="space-y-3 border-t border-gray-200 pt-3" onSubmit={submit}>
+        <form className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4" onSubmit={submit}>
           {errorMessage && (
             <div className="space-y-2">
               <ErrorBox message={errorMessage} />
               {errorMessage.includes('already have an active proposal') && (
-                <Link className="text-sm text-blue-700 underline" to="/proposals">
+                <Link className="text-sm font-semibold text-indigo-700 underline" to="/proposals">
                   View your proposals
                 </Link>
               )}
             </div>
           )}
-          <label className="block text-sm font-medium" htmlFor={`amount-${tier._id}`}>
+          <label className="label" htmlFor={`amount-${tier._id}`}>
             Proposed amount (INR)
             <input
-              className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+              className="input"
               id={`amount-${tier._id}`}
               min="0.01"
               onChange={(event) => setAmount(event.target.value)}
@@ -112,12 +112,12 @@ export default function SendProposalForm({ eventId, tier }) {
               type="number"
               value={amount}
             />
-            {errors.amount && <span className="mt-1 block text-red-700">{errors.amount}</span>}
+            {errors.amount && <span className="mt-1 block text-sm text-rose-600">{errors.amount}</span>}
           </label>
-          <label className="block text-sm font-medium" htmlFor={`message-${tier._id}`}>
+          <label className="label" htmlFor={`message-${tier._id}`}>
             Message
             <textarea
-              className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+              className="input"
               id={`message-${tier._id}`}
               maxLength={1000}
               minLength={10}
@@ -126,14 +126,14 @@ export default function SendProposalForm({ eventId, tier }) {
               rows={4}
               value={message}
             />
-            <span className="mt-1 block text-xs text-gray-600">{message.length}/1000 characters</span>
-            {errors.message && <span className="mt-1 block text-red-700">{errors.message}</span>}
+            <span className="mt-1 block text-xs text-slate-500">{message.length}/1000 characters</span>
+            {errors.message && <span className="mt-1 block text-sm text-rose-600">{errors.message}</span>}
           </label>
           <div className="flex flex-wrap items-end gap-2">
-            <label className="text-sm font-medium" htmlFor={`tone-${tier._id}`}>
+            <label className="label" htmlFor={`tone-${tier._id}`}>
               Draft tone
               <select
-                className="mt-1 block rounded border border-gray-300 px-3 py-2"
+                className="input"
                 id={`tone-${tier._id}`}
                 onChange={(event) => setTone(event.target.value)}
                 value={tone}
@@ -144,7 +144,7 @@ export default function SendProposalForm({ eventId, tier }) {
               </select>
             </label>
             <button
-              className="rounded border border-blue-700 px-3 py-2 text-sm text-blue-700 disabled:opacity-60"
+              className="btn-secondary"
               disabled={drafting}
               onClick={draftWithAI}
               type="button"
@@ -155,14 +155,14 @@ export default function SendProposalForm({ eventId, tier }) {
           {draftError && <ErrorBox message={draftError} />}
           <div className="flex gap-2">
             <button
-              className="rounded bg-blue-700 px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
+              className="btn-primary"
               disabled={submitting}
               type="submit"
             >
               {submitting ? 'Sending...' : 'Submit proposal'}
             </button>
             <button
-              className="rounded border border-gray-300 px-3 py-2 text-sm"
+              className="btn-secondary"
               disabled={submitting}
               onClick={() => setExpanded(false)}
               type="button"

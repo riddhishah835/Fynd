@@ -174,7 +174,7 @@ export default function ChatPanel({ proposalId }) {
     return (
       <div className="space-y-2">
         <ErrorBox message={loadError} />
-        <button className="text-sm text-blue-700 underline" onClick={loadHistory} type="button">
+        <button className="btn-secondary" onClick={loadHistory} type="button">
           Retry
         </button>
       </div>
@@ -183,19 +183,20 @@ export default function ChatPanel({ proposalId }) {
 
   let previousDate = '';
   return (
-    <section className="space-y-3 rounded border border-gray-300 bg-white p-4">
+    <section className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Chat</h2>
-        <p className="text-xs text-gray-600">
+        <h2 className="text-lg font-semibold text-slate-900">Chat</h2>
+        <p className="inline-flex items-center gap-2 text-xs font-medium text-slate-600">
+          <span className={`h-2 w-2 rounded-full ${connected ? 'bg-emerald-500' : 'animate-pulse bg-amber-400'}`} />
           {connected ? 'Live' : 'Reconnecting... (messages still update)'}
         </p>
       </div>
       <div
-        className="h-96 space-y-3 overflow-y-auto rounded border border-gray-200 bg-gray-50 p-3"
+        className="h-96 space-y-3 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-4"
         ref={scrollRef}
       >
         {messages.length === 0 ? (
-          <p className="py-8 text-center text-sm text-gray-500">No messages yet. Say hello.</p>
+          <p className="py-12 text-center text-sm text-slate-500">No messages yet. Say hello.</p>
         ) : messages.map((message) => {
           const date = dateLabel(message.createdAt);
           const isOwn = message.sender._id === user._id;
@@ -204,13 +205,15 @@ export default function ChatPanel({ proposalId }) {
           return (
             <div key={messageId(message)}>
               {showDate && (
-                <p className="my-3 text-center text-xs text-gray-500">{date}</p>
+                <p className="my-3 text-center text-xs text-slate-400">{date}</p>
               )}
               <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-lg px-3 py-2 ${
-                  isOwn ? 'bg-blue-700 text-white' : 'bg-white text-gray-900 shadow-sm'
+                <div className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
+                  isOwn
+                    ? 'rounded-br-sm bg-gradient-to-br from-indigo-600 to-violet-600 text-white'
+                    : 'rounded-bl-sm border border-slate-200 bg-white text-slate-900'
                 }`}>
-                  {!isOwn && <p className="mb-1 text-xs font-semibold">{message.sender.name}</p>}
+                  {!isOwn && <p className="mb-1 text-xs font-semibold text-slate-700">{message.sender.name}</p>}
                   <p className="whitespace-pre-wrap break-words text-sm">{message.text}</p>
                   <time className="mt-1 block text-right text-[11px] opacity-75" dateTime={message.createdAt}>
                     {timeLabel(message.createdAt)}
@@ -223,14 +226,14 @@ export default function ChatPanel({ proposalId }) {
       </div>
       {sendError && <ErrorBox message={sendError} />}
       <form
-        className="space-y-2"
+        className="sticky bottom-0 space-y-2 border-t border-slate-100 bg-white pt-3"
         onSubmit={(event) => {
           event.preventDefault();
           sendMessage();
         }}
       >
         <textarea
-          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+          className="input resize-none text-sm"
           maxLength={1000}
           onChange={(event) => setText(event.target.value)}
           onKeyDown={onKeyDown}
@@ -239,13 +242,19 @@ export default function ChatPanel({ proposalId }) {
           value={text}
         />
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs text-gray-500">{text.length}/1000</span>
+          <span className="text-xs text-slate-500">{text.length}/1000</span>
           <button
-            className="rounded bg-blue-700 px-4 py-2 text-sm text-white disabled:opacity-50"
+            aria-label={sending ? 'Sending message' : 'Send message'}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!text.trim() || sending}
             type="submit"
           >
-            {sending ? 'Sending...' : 'Send'}
+            {sending ? null : (
+              <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path d="m5 12 14-7-5 14-2-6-7-1Z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
+              </svg>
+            )}
+            <span className="sr-only">{sending ? 'Sending...' : 'Send'}</span>
           </button>
         </div>
       </form>

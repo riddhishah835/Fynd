@@ -35,31 +35,37 @@ export default function SponsorDashboard() {
   }, []);
 
   return (
-    <section className="space-y-3">
-      <h1 className="text-2xl font-semibold">Welcome, {user.name}</h1>
-      <p>Organization: {user.organization}</p>
-      <p>City: {user.city}</p>
-      <p>Role: {user.role}</p>
-      <section className="space-y-2 rounded border border-gray-200 bg-white p-4">
-        <h2 className="font-semibold">My proposals</h2>
+    <section className="space-y-8">
+      <div>
+        <h1 className="page-title">Welcome, {user.name}</h1>
+        <p className="mt-2 text-slate-600">Organization: {user.organization}</p>
+        <p className="text-slate-600">City: {user.city}</p>
+        <p className="text-sm capitalize text-slate-500">Role: {user.role}</p>
+      </div>
+      <section className="card space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900">My proposals</h2>
+          <p className="mt-1 text-sm text-slate-500">Keep track of proposals at every stage.</p>
+        </div>
         {loading && <Loader />}
         {!loading && errorMessage && <ErrorBox message={errorMessage} />}
         {!loading && !errorMessage && (
-          <div className="flex flex-wrap gap-4 text-sm">
+          <div className="grid gap-3 sm:grid-cols-3">
             {Object.entries(counts).map(([status, count]) => (
               <Link
-                className="text-blue-700 underline"
+                className="rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:border-indigo-200 hover:bg-indigo-50"
                 key={status}
                 to={`/proposals?status=${status}`}
               >
-                {status[0].toUpperCase() + status.slice(1)}: {count}
+                <span className="block text-sm font-medium capitalize text-slate-500">{status}</span>
+                <span className="mt-1 block text-2xl font-bold text-slate-900">{count}</span>
               </Link>
             ))}
-            <Link className="text-blue-700 underline" to="/proposals">All proposals</Link>
+            <Link className="btn-secondary sm:col-span-3" to="/proposals">All proposals</Link>
           </div>
         )}
       </section>
-      <Link className="inline-block rounded bg-blue-700 px-4 py-2 font-medium text-white" to="/events">
+      <Link className="btn-primary" to="/events">
         Browse events
       </Link>
     </section>

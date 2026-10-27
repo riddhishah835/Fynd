@@ -18,7 +18,7 @@ const initialValues = {
   goals: '',
 };
 
-const fieldClass = 'mt-1 w-full rounded border border-gray-300 px-3 py-2';
+const fieldClass = 'input';
 
 export default function Signup() {
   const [role, setRole] = useState('organizer');
@@ -110,19 +110,20 @@ export default function Signup() {
           {...options}
         />
       )}
-      {errors[name] && <span className="mt-1 block text-sm text-red-700">{errors[name]}</span>}
+      {errors[name] && <span className="mt-1 block text-sm text-rose-600">{errors[name]}</span>}
     </label>
   );
 
   return (
-    <section className="mx-auto max-w-xl space-y-5">
-      <h1 className="text-2xl font-semibold">Create your account</h1>
+    <section className="-my-8 flex min-h-[calc(100vh-9rem)] items-center justify-center bg-gradient-to-br from-indigo-50 via-slate-50 to-violet-50 px-4 py-10 sm:px-6">
+      <div className="w-full max-w-xl space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-indigo-900/5 sm:p-8">
+      <h1 className="page-title text-center">Create your account</h1>
 
-      <div className="flex gap-2" role="tablist" aria-label="Account type">
+      <div className="mx-auto flex w-fit rounded-2xl bg-slate-100 p-1" role="tablist" aria-label="Account type">
         <button
           aria-selected={role === 'organizer'}
-          className={`rounded border px-3 py-2 text-sm ${
-            role === 'organizer' ? 'border-blue-700 bg-blue-50 text-blue-800' : 'border-gray-300'
+          className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-indigo-500 ${
+            role === 'organizer' ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setRole('organizer')}
           role="tab"
@@ -132,8 +133,8 @@ export default function Signup() {
         </button>
         <button
           aria-selected={role === 'sponsor'}
-          className={`rounded border px-3 py-2 text-sm ${
-            role === 'sponsor' ? 'border-blue-700 bg-blue-50 text-blue-800' : 'border-gray-300'
+          className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-indigo-500 ${
+            role === 'sponsor' ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'
           }`}
           onClick={() => setRole('sponsor')}
           role="tab"
@@ -178,14 +179,11 @@ export default function Signup() {
           </>
         )}
 
-        <button
-          className="rounded bg-blue-700 px-4 py-2 font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={submitting}
-          type="submit"
-        >
+        <button className="btn-primary w-full" disabled={submitting} type="submit">
           {submitting ? 'Creating account...' : 'Create account'}
         </button>
       </form>
+      </div>
     </section>
   );
 }

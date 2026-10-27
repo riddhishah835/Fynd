@@ -7,7 +7,7 @@
 1. This document is the single source of truth. Do not change the stack, data model, endpoints, or status flow without the human explicitly approving it.
 2. Do not add features that are not listed here. If something seems missing, ask the human.
 3. Build in the milestone order in Section 12. Do not start a later milestone before the current one works end to end.
-4. UI stays simple: Tailwind utility classes, plain components, no UI polish, no animation libraries. Functionality first.
+4.UI polish is approved: styling only, using Tailwind and the design tokens in client/src/index.css. Never change logic, routes, API calls, props, or state while styling.” 
 5. Never hardcode secrets. All secrets come from `.env`. Never commit `.env`. Keep `.env.example` updated.
 6. Every API endpoint validates input with Zod and returns errors in the standard format (Section 9).
 7. Every frontend page that fetches data handles three states: loading, error, empty.
@@ -282,8 +282,7 @@ GET /auth/socket-token
 - `ProposalDetail` is the most important page: shows event and tier, current amount, status badge, history timeline, action buttons that appear only when the current status and role allow them, the chat panel, and the deliverables list.
 - Forms show inline validation errors from the server `details`.
 - Use a simple toast or inline message for success and failure of every action.
-- No design system, no icons library required. Plain, readable, responsive enough to use on a laptop.
-
+-
 ## 11. Security, Reliability, Testing
 
 - Passwords hashed with bcrypt (cost 10). Never return `passwordHash`.

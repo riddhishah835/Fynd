@@ -128,62 +128,69 @@ export default function ProposalDetail() {
 
   return (
     <article className="space-y-6">
-      <header className="space-y-3">
+      <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-semibold">
-            <Link className="text-blue-800 underline" to={`/events/${proposal.event._id}`}>
+          <h1 className="page-title">
+            <Link className="text-slate-900 transition hover:text-indigo-700 focus-visible:rounded" to={`/events/${proposal.event._id}`}>
               {proposal.event.title}
             </Link>
           </h1>
           <StatusBadge status={proposal.status} />
         </div>
-        <p className="text-sm text-gray-700">
+        <p className="mt-3 text-sm text-slate-600">
           {formatDateRange(proposal.event.startDate, proposal.event.endDate)} · {proposal.event.city}
         </p>
-        <p className="text-sm text-gray-600">{nextAction}</p>
+        <p className="mt-2 text-sm text-slate-500">{nextAction}</p>
       </header>
 
       {actionError && <ErrorBox message={actionError} />}
 
-      <section className="space-y-4 rounded border border-gray-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Deal summary</h2>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.85fr)]">
+      <div className="space-y-6">
+      <section className="card space-y-5">
+        <h2 className="text-xl font-semibold text-slate-900">Deal summary</h2>
         <div>
-          <h3 className="font-medium">{proposal.tierSnapshot.name} tier</h3>
-          <ul className="mt-1 list-inside list-disc text-sm text-gray-700">
+          <h3 className="font-semibold text-slate-800">{proposal.tierSnapshot.name} tier</h3>
+          <ul className="mt-2 space-y-2 text-sm text-slate-600">
             {proposal.tierSnapshot.benefits.map((benefit, index) => (
-              <li key={`${index}-${benefit}`}>{benefit}</li>
+              <li className="flex gap-2" key={`${index}-${benefit}`}>
+                <svg aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24">
+                  <path d="m5 12 4 4L19 6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                </svg>
+                {benefit}
+              </li>
             ))}
           </ul>
         </div>
-        <p className="font-semibold">Current amount: {formatINR(proposal.amount)}</p>
+        <p className="rounded-xl bg-indigo-50 px-4 py-3 font-semibold text-indigo-900">Current amount: {formatINR(proposal.amount)}</p>
         {proposal.amount !== proposal.tierSnapshot.price && (
-          <p className="text-sm text-gray-700">Tier original price: {formatINR(proposal.tierSnapshot.price)}</p>
+          <p className="text-sm text-slate-600">Tier original price: {formatINR(proposal.tierSnapshot.price)}</p>
         )}
         <div>
-          <h3 className="font-medium">Initial message</h3>
-          <p className="whitespace-pre-wrap text-sm text-gray-700">{proposal.message}</p>
+          <h3 className="font-semibold text-slate-800">Initial message</h3>
+          <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-600">{proposal.message}</p>
         </div>
         {proposal.status === 'countered' && proposal.counterNote && (
-          <div>
-            <h3 className="font-medium">Counter note</h3>
-            <p className="whitespace-pre-wrap text-sm text-gray-700">{proposal.counterNote}</p>
+          <div className="rounded-xl bg-amber-50 p-4">
+            <h3 className="font-semibold text-amber-900">Counter note</h3>
+            <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-amber-800">{proposal.counterNote}</p>
           </div>
         )}
         <div>
-          <h3 className="font-medium">Other party</h3>
-          <p className="text-sm text-gray-700">
+          <h3 className="font-semibold text-slate-800">Other party</h3>
+          <p className="mt-1 text-sm text-slate-600">
             {counterpart.name} · {counterpart.organization} · {counterpart.city}
           </p>
         </div>
       </section>
 
-      <section className="space-y-3 rounded border border-gray-200 bg-white p-4">
-        <h2 className="text-lg font-semibold">Actions</h2>
+      <section className="card space-y-4">
+        <h2 className="text-xl font-semibold text-slate-900">Actions</h2>
         <div className="flex flex-wrap gap-2">
           {user.role === 'organizer' && proposal.status === 'pending' && (
             <>
               <button
-                className="rounded bg-green-700 px-3 py-2 text-sm text-white disabled:opacity-50"
+                className="btn bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
                 disabled={submitting}
                 onClick={() => submitTransition('accepted')}
                 type="button"
@@ -191,7 +198,7 @@ export default function ProposalDetail() {
                 Accept
               </button>
               <button
-                className="rounded border border-gray-300 px-3 py-2 text-sm disabled:opacity-50"
+                className="btn-primary"
                 disabled={submitting}
                 onClick={() => openForm('counter')}
                 type="button"
@@ -199,7 +206,7 @@ export default function ProposalDetail() {
                 Counter
               </button>
               <button
-                className="rounded border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
+                className="btn-danger"
                 disabled={submitting}
                 onClick={() => openForm('reject')}
                 type="button"
@@ -210,7 +217,7 @@ export default function ProposalDetail() {
           )}
           {user.role === 'sponsor' && proposal.status === 'pending' && (
             <button
-              className="rounded border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
+              className="btn-danger"
               disabled={submitting}
               onClick={() => submitTransition('withdrawn', {}, 'Withdraw this proposal?')}
               type="button"
@@ -221,7 +228,7 @@ export default function ProposalDetail() {
           {user.role === 'sponsor' && proposal.status === 'countered' && (
             <>
               <button
-                className="rounded bg-green-700 px-3 py-2 text-sm text-white disabled:opacity-50"
+                className="btn bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
                 disabled={submitting}
                 onClick={() => submitTransition('accepted')}
                 type="button"
@@ -229,7 +236,7 @@ export default function ProposalDetail() {
                 Accept
               </button>
               <button
-                className="rounded border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
+                className="btn-danger"
                 disabled={submitting}
                 onClick={() => submitTransition('rejected', {}, 'Reject this counter-offer?')}
                 type="button"
@@ -237,7 +244,7 @@ export default function ProposalDetail() {
                 Reject
               </button>
               <button
-                className="rounded border border-gray-300 px-3 py-2 text-sm disabled:opacity-50"
+                className="btn-primary"
                 disabled={submitting}
                 onClick={() => openForm('recounter')}
                 type="button"
@@ -249,11 +256,11 @@ export default function ProposalDetail() {
           {proposal.status === 'accepted' && (
             <>
               {user.role === 'organizer' && (
-                <div className={`rounded p-2 ${
-                  allDeliverablesApproved ? 'bg-green-50 ring-2 ring-green-300' : ''
+                <div className={`rounded-2xl p-3 ${
+                  allDeliverablesApproved ? 'bg-emerald-50 ring-2 ring-emerald-200' : ''
                 }`}>
                   <button
-                    className="rounded bg-blue-700 px-3 py-2 text-sm text-white disabled:opacity-50"
+                    className="btn-primary"
                     disabled={submitting}
                     onClick={() => submitTransition('completed')}
                     type="button"
@@ -261,14 +268,14 @@ export default function ProposalDetail() {
                     Mark completed
                   </button>
                   {allDeliverablesApproved && (
-                    <p className="mt-2 text-sm text-green-800">
+                    <p className="mt-2 text-sm font-medium text-emerald-800">
                       All deliverables approved, you can mark this deal as completed
                     </p>
                   )}
                 </div>
               )}
               <button
-                className="rounded border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
+                className="btn-danger"
                 disabled={submitting}
                 onClick={() => submitTransition('withdrawn', {}, 'Withdraw this accepted proposal?')}
                 type="button"
@@ -280,12 +287,12 @@ export default function ProposalDetail() {
         </div>
 
         {showTransitionForm && (
-          <form className="max-w-lg space-y-3 border-t border-gray-200 pt-3" onSubmit={submitForm}>
+          <form className="max-w-lg space-y-3 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4" onSubmit={submitForm}>
             {(formType === 'counter' || formType === 'recounter') && (
-              <label className="block text-sm font-medium" htmlFor="counter-amount">
+              <label className="label" htmlFor="counter-amount">
                 {formType === 'counter' ? 'Counter amount' : 'New amount'}
                 <input
-                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+                  className="input"
                   id="counter-amount"
                   min="0.01"
                   onChange={(event) => setAmount(event.target.value)}
@@ -297,10 +304,10 @@ export default function ProposalDetail() {
               </label>
             )}
             {(formType === 'counter' || formType === 'reject' || formType === 'recounter') && (
-              <label className="block text-sm font-medium" htmlFor="transition-note">
+              <label className="label" htmlFor="transition-note">
                 Note {formType === 'reject' ? '(required)' : '(optional)'}
                 <textarea
-                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+                  className="input"
                   id="transition-note"
                   maxLength={500}
                   onChange={(event) => setNote(event.target.value)}
@@ -312,14 +319,14 @@ export default function ProposalDetail() {
             )}
             <div className="flex gap-2">
               <button
-                className="rounded bg-blue-700 px-3 py-2 text-sm text-white disabled:opacity-50"
+                className="btn-primary"
                 disabled={submitting}
                 type="submit"
               >
                 {submitting ? 'Submitting...' : 'Submit'}
               </button>
               <button
-                className="rounded border border-gray-300 px-3 py-2 text-sm"
+                className="btn-secondary"
                 disabled={submitting}
                 onClick={() => setFormType('')}
                 type="button"
@@ -331,21 +338,27 @@ export default function ProposalDetail() {
         )}
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">History</h2>
-        <ol className="space-y-3 border-l border-gray-300 pl-4">
+      <section className="card space-y-5">
+        <h2 className="text-xl font-semibold text-slate-900">History</h2>
+        <ol className="relative space-y-6 border-l-2 border-slate-200 pl-6">
           {proposal.history.map((entry, index) => (
-            <li className="space-y-1" key={`${entry.at}-${index}`}>
+            <li className="relative space-y-2" key={`${entry.at}-${index}`}>
+              <span className={`absolute -left-[31px] top-1 h-3 w-3 rounded-full ring-4 ring-white ${
+                entry.to === 'accepted' || entry.to === 'completed' ? 'bg-emerald-500'
+                  : entry.to === 'rejected' || entry.to === 'withdrawn' ? 'bg-rose-500'
+                    : entry.to === 'countered' ? 'bg-sky-500'
+                      : 'bg-amber-400'
+              }`} />
               <div className="flex flex-wrap items-center gap-2">
-                {entry.from ? <StatusBadge status={entry.from} /> : <span className="text-sm">Created</span>}
+                {entry.from ? <StatusBadge status={entry.from} /> : <span className="text-sm font-medium text-slate-600">Created</span>}
                 {entry.from && <span aria-hidden="true">→</span>}
                 <StatusBadge status={entry.to} />
               </div>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-slate-600">
                 By {actorName(typeof entry.by === 'string' ? entry.by : entry.by._id)}
               </p>
-              {entry.note && <p className="whitespace-pre-wrap text-sm text-gray-700">{entry.note}</p>}
-              <time className="block text-xs text-gray-500" dateTime={entry.at}>
+              {entry.note && <p className="whitespace-pre-wrap text-sm leading-6 text-slate-600">{entry.note}</p>}
+              <time className="block text-xs text-slate-400" dateTime={entry.at}>
                 {formatTimestamp(entry.at)}
               </time>
             </li>
@@ -356,8 +369,11 @@ export default function ProposalDetail() {
       {['accepted', 'completed'].includes(proposal.status) && (
         <DeliverablesPanel proposal={proposal} onChanged={loadProposal} />
       )}
-
-      <ChatPanel proposalId={id} />
+      </div>
+      <aside className="lg:sticky lg:top-24">
+        <ChatPanel proposalId={id} />
+      </aside>
+      </div>
     </article>
   );
 }

@@ -47,14 +47,14 @@ export default function Proposals() {
   };
 
   return (
-    <section className="space-y-5">
-      <h1 className="text-2xl font-semibold">
+    <section className="space-y-6">
+      <h1 className="page-title">
         {user.role === 'sponsor' ? 'My proposals' : 'Proposals received'}
       </h1>
-      <div className="flex flex-wrap gap-2" aria-label="Filter proposals by status">
+      <div className="flex w-fit max-w-full flex-wrap gap-1 rounded-2xl bg-slate-100 p-1" aria-label="Filter proposals by status">
         <button
           aria-pressed={!selectedStatus}
-          className={`rounded border px-3 py-1.5 text-sm ${!selectedStatus ? 'border-blue-700 bg-blue-50' : 'border-gray-300'}`}
+          className={`rounded-xl px-3 py-2 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-indigo-500 ${!selectedStatus ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
           onClick={() => chooseStatus('')}
           type="button"
         >
@@ -63,7 +63,7 @@ export default function Proposals() {
         {statuses.map((status) => (
           <button
             aria-pressed={selectedStatus === status}
-            className={`rounded border px-3 py-1.5 text-sm capitalize ${selectedStatus === status ? 'border-blue-700 bg-blue-50' : 'border-gray-300'}`}
+            className={`rounded-xl px-3 py-2 text-sm font-medium capitalize transition focus-visible:outline-2 focus-visible:outline-indigo-500 ${selectedStatus === status ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
             key={status}
             onClick={() => chooseStatus(status)}
             type="button"
@@ -83,36 +83,36 @@ export default function Proposals() {
         />
       )}
       {!loading && !errorMessage && proposals.length > 0 && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {proposals.map((proposal) => {
             const counterpart = user.role === 'sponsor' ? proposal.organizer : proposal.sponsor;
             const yourTurn = (user.role === 'organizer' && proposal.status === 'pending')
               || (user.role === 'sponsor' && proposal.status === 'countered');
             return (
               <Link
-                className="block rounded border border-gray-200 bg-white p-4 hover:bg-gray-50"
+                className="block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md focus-visible:outline-2 focus-visible:outline-indigo-500"
                 key={proposal._id}
                 to={`/proposals/${proposal._id}`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <h2 className="font-semibold">{proposal.event?.title ?? 'Event'}</h2>
-                    <p className="text-sm text-gray-700">Tier: {proposal.tierSnapshot.name}</p>
-                    <p className="text-sm text-gray-700">
+                    <h2 className="text-lg font-semibold text-slate-900">{proposal.event?.title ?? 'Event'}</h2>
+                    <p className="text-sm text-slate-600">Tier: {proposal.tierSnapshot.name}</p>
+                    <p className="text-sm text-slate-600">
                       {counterpart.name} · {counterpart.organization}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium">{formatINR(proposal.amount)}</span>
+                    <span className="font-semibold text-slate-900">{formatINR(proposal.amount)}</span>
                     <StatusBadge status={proposal.status} />
                     {yourTurn && (
-                      <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                      <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200">
                         Your turn
                       </span>
                     )}
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-gray-600">
+                <p className="mt-3 border-t border-slate-100 pt-3 text-xs text-slate-500">
                   Updated {formatDateRange(proposal.updatedAt, proposal.updatedAt)}
                 </p>
               </Link>

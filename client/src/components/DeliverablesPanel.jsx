@@ -76,11 +76,19 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
   const canEdit = proposal.status === 'accepted';
 
   return (
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold">Deliverables</h2>
-      <p className="text-sm text-gray-700">
+    <section className="space-y-4">
+      <h2 className="text-xl font-semibold text-slate-900">Deliverables</h2>
+      <div className="space-y-2">
+      <p className="text-sm font-medium text-slate-600">
         {approvedCount} of {deliverables.length} approved
       </p>
+      <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 transition-all"
+          style={{ width: `${deliverables.length ? (approvedCount / deliverables.length) * 100 : 0}%` }}
+        />
+      </div>
+      </div>
       {deliverables.length === 0 ? (
         <Empty message="No deliverables" />
       ) : (
@@ -97,19 +105,31 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
 
             return (
               <li
-                className="space-y-3 rounded border border-gray-200 bg-white p-3"
+                className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5"
                 key={deliverable._id}
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-medium">{deliverable.title}</h3>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                      deliverable.status === 'approved' ? 'bg-emerald-50 text-emerald-600'
+                        : deliverable.status === 'disputed' ? 'bg-rose-50 text-rose-600'
+                          : deliverable.status === 'delivered' ? 'bg-amber-50 text-amber-600'
+                            : 'bg-slate-100 text-slate-500'
+                    }`}>
+                      <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
+                        <path d={deliverable.status === 'approved' ? 'm5 12 4 4L19 6' : 'M12 5v14m-7-7h14'} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+                      </svg>
+                    </span>
+                    <h3 className="font-semibold text-slate-900">{deliverable.title}</h3>
+                  </div>
                   <StatusBadge status={deliverable.status} />
                 </div>
                 {deliverable.note && (
-                  <p className="whitespace-pre-wrap text-sm text-gray-700">{deliverable.note}</p>
+                  <p className="whitespace-pre-wrap text-sm leading-6 text-slate-600">{deliverable.note}</p>
                 )}
                 {deliverable.proofUrl && (
                   <a
-                    className="text-sm text-blue-700 underline"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100"
                     href={deliverable.proofUrl}
                     rel="noreferrer"
                     target="_blank"
@@ -120,12 +140,12 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
                 {errors[deliverable._id] && <ErrorBox message={errors[deliverable._id]} />}
 
                 {organizerCanDeliver && (
-                  <div className="space-y-2 border-t border-gray-100 pt-3">
-                    <label className="block text-sm font-medium">
+                  <div className="space-y-3 border-t border-slate-100 pt-4">
+                    <label className="label">
                       Proof file (JPEG, PNG, WebP, or PDF; max 5 MB)
                       <input
                         accept="image/jpeg,image/png,image/webp,application/pdf"
-                        className="mt-1 block w-full text-sm"
+                        className="input file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-indigo-700"
                         disabled={busy}
                         onChange={(event) => {
                           const file = event.target.files?.[0];
@@ -135,12 +155,12 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
                       />
                     </label>
                     {uploadingId === deliverable._id && (
-                      <p className="text-sm text-gray-600">Uploading...</p>
+                      <p className="text-sm text-slate-500">Uploading...</p>
                     )}
-                    <label className="block text-sm font-medium">
+                    <label className="label">
                       Note
                       <textarea
-                        className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+                        className="input"
                         maxLength={500}
                         onChange={(event) => setNotes((current) => ({
                           ...current,
@@ -151,7 +171,7 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
                       />
                     </label>
                     <button
-                      className="rounded bg-blue-700 px-3 py-2 text-sm text-white disabled:opacity-50"
+                      className="btn-primary"
                       disabled={busy}
                       onClick={() => updateStatus(deliverable, 'delivered', note)}
                       type="button"
@@ -162,9 +182,9 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
                 )}
 
                 {sponsorCanRespond && (
-                  <div className="flex flex-wrap gap-2 border-t border-gray-100 pt-3">
+                  <div className="flex flex-wrap gap-2 border-t border-slate-100 pt-4">
                     <button
-                      className="rounded bg-green-700 px-3 py-2 text-sm text-white disabled:opacity-50"
+                      className="btn bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
                       disabled={busy}
                       onClick={() => updateStatus(deliverable, 'approved')}
                       type="button"
@@ -173,7 +193,7 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
                     </button>
                     {disputeId !== deliverable._id ? (
                       <button
-                        className="rounded border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
+                        className="btn-danger"
                         disabled={busy}
                         onClick={() => setDisputeId(deliverable._id)}
                         type="button"
@@ -182,16 +202,16 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
                       </button>
                     ) : (
                       <form
-                        className="w-full space-y-2"
+                        className="w-full space-y-3 rounded-xl bg-rose-50 p-4"
                         onSubmit={(event) => {
                           event.preventDefault();
                           updateStatus(deliverable, 'disputed', note);
                         }}
                       >
-                        <label className="block text-sm font-medium">
+                        <label className="label">
                           Dispute note (required)
                           <textarea
-                            className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+                            className="input"
                             maxLength={500}
                             onChange={(event) => setNotes((current) => ({
                               ...current,
@@ -203,14 +223,14 @@ export default function DeliverablesPanel({ proposal, onChanged }) {
                           />
                         </label>
                         <button
-                          className="rounded bg-red-700 px-3 py-2 text-sm text-white disabled:opacity-50"
+                          className="btn-danger"
                           disabled={busy || !note.trim()}
                           type="submit"
                         >
                           {submittingId === deliverable._id ? 'Saving...' : 'Submit dispute'}
                         </button>
                         <button
-                          className="ml-2 rounded border border-gray-300 px-3 py-2 text-sm"
+                          className="btn-ghost"
                           disabled={busy}
                           onClick={() => setDisputeId('')}
                           type="button"
