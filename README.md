@@ -59,6 +59,7 @@ Fynd is a two-sided sponsorship marketplace. Organizers publish events with spon
 - **Proposal drafter:** creates an editable sponsorship message for the sponsor to review before sending.
 - **Semantic matching:** creates event and sponsor embeddings, ranks relevant published events, and provides a generated or templated reason.
 - **Event prefill:** extracts event information from pasted text to prefill the organizer's event form for review.
+- - **Tool-calling assistant:** a role-aware chat assistant that answers questions by calling server-side tools (event search, proposal lookup, chat summaries, pending actions, budget-based tier suggestions) against live marketplace data. Tools enforce the caller's role and ownership server-side, and the assistant is read-only: it cannot accept, reject, or send anything.
 
 AI is optional at runtime. If the AI provider is unavailable, the core marketplace remains usable; matching can fall back to regular event candidates and templated reasons.
 
