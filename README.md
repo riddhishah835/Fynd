@@ -281,9 +281,9 @@ Do not commit `.env` files or place real credentials in this table. Start from `
 
 ### Deployment links
 
-- **Live app:** `LIVE_APP_URL` (fill in above)
-- **API:** `API_URL` (fill in above)
-- **Demo video:** `DEMO_VIDEO_URL` (fill in above)
+- **Live app:** https://fynd-nu.vercel.app
+- **API:** https://fynd-wbz6.onrender.com/api/health
+- **Demo video:** https://drive.google.com/file/d/1yHE1IdJ5i-tvvwCKu0MkLKuC8uUMl61l/view?usp=sharing
 
 ## Demo Credentials
 
