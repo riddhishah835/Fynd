@@ -2,11 +2,11 @@
 
 **A simpler way for small brands and event organizers to find and run sponsorships.**
 
-> **Project links — fill in before sharing**
->
-> - **Live app:** https://fynd-nu.vercel.app/
-> - **API:** https://fynd-wbz6.onrender.com/api/health
-> - **Demo video:** https://drive.google.com/file/d/1yHE1IdJ5i-tvvwCKu0MkLKuC8uUMl61l/view?usp=sharing
+### Deployment links
+
+- **Live app:** https://fynd-nu.vercel.app
+- **API:** https://fynd-wbz6.onrender.com/api/health
+- **Demo video:** https://drive.google.com/file/d/1yHE1IdJ5i-tvvwCKu0MkLKuC8uUMl61l/view?usp=sharing
 
 ## Problem Statement
 
@@ -20,12 +20,6 @@ Small companies often struggle to find relevant, affordable events to sponsor. E
 ## Solution
 
 Fynd is a two-sided sponsorship marketplace. Organizers publish events with sponsorship tiers, while sponsors discover events, send proposals, and coordinate with organizers through a shared proposal workflow that includes negotiation, chat, and deliverable tracking.
-
-### Deployment links
-
-- **Live app:** https://fynd-nu.vercel.app
-- **API:** https://fynd-wbz6.onrender.com/api/health
-- **Demo video:** https://drive.google.com/file/d/1yHE1IdJ5i-tvvwCKu0MkLKuC8uUMl61l/view?usp=sharing
   
 ## Key Features
 
