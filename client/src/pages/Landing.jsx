@@ -1,8 +1,4 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../api/axios.js';
-import ErrorBox from '../components/ErrorBox.jsx';
-import Loader from '../components/Loader.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getDashboardPath } from '../utils/helpers.js';
 
@@ -62,24 +58,7 @@ function LogoMark() {
 }
 
 export default function Landing() {
-  const [loading, setLoading] = useState(true);
-  const [databaseStatus, setDatabaseStatus] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const { user } = useAuth();
-
-  useEffect(() => {
-    api
-      .get('/health')
-      .then(({ data }) => {
-        setDatabaseStatus(data.db);
-      })
-      .catch((error) => {
-        setErrorMessage(error.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
 
   return (
     <div className="-mx-4 -mt-8 space-y-16 pb-8 sm:-mx-6">
@@ -110,13 +89,6 @@ export default function Landing() {
                   <Link className="btn-secondary" to="/signup">I&apos;m a sponsor</Link>
                 </>
               )}
-            </div>
-            <div className="inline-flex min-h-9 items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs text-slate-600 shadow-sm">
-              <span className={`h-2 w-2 rounded-full ${loading ? 'bg-amber-400' : errorMessage ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-              <span className="font-medium text-slate-700">Server status</span>
-              {loading && <Loader />}
-              {!loading && errorMessage && <ErrorBox message={errorMessage} />}
-              {!loading && !errorMessage && <span>Connected (db: {databaseStatus})</span>}
             </div>
           </div>
           <div aria-hidden="true" className="relative mx-auto w-full max-w-md">
