@@ -68,10 +68,11 @@ export default function Navbar() {
                     <NavLink className={linkClass} to="/events">
                       {user.role === 'organizer' ? 'Browse events' : 'Discover'}
                     </NavLink>
-                    <NavLink className={linkClass} to="/proposals">
-                      {user.role === 'organizer' ? 'Proposals' : 'My proposals'}
-                    </NavLink>
-                    <NavLink className={linkClass} to="/notifications">
+<NavLink className={linkClass} to="/proposals">
+                    {user.role === 'organizer' ? 'Proposals' : 'My proposals'}
+                  </NavLink>
+                  <NavLink className={linkClass} to="/assistant">Assistant</NavLink>
+                  <NavLink className={linkClass} to="/notifications">
                       <span className="inline-flex items-center gap-2">
                         Notifications
                         {unreadCount > 0 && (
@@ -156,6 +157,7 @@ export default function Navbar() {
                   <NavLink className={linkClass} onClick={() => setMenuOpen(false)} to="/proposals">
                     {user.role === 'organizer' ? 'Proposals' : 'My proposals'}
                   </NavLink>
+                  <NavLink className={linkClass} onClick={() => setMenuOpen(false)} to="/assistant">Assistant</NavLink>
                   <NavLink className={linkClass} onClick={() => setMenuOpen(false)} to="/notifications">
                     Notifications{unreadCount > 0 ? ` (${unreadCount})` : ''}
                   </NavLink>

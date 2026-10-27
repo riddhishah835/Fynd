@@ -216,6 +216,7 @@ LLM service behavior: llm.js retries once on LLM_FALLBACK_MODEL when the primary
   - `list_pending_actions()` (what needs my response)
 - The assistant never performs state-changing actions (no accept, reject, send). It informs and drafts only.
 - The system prompt states the user's role and tells the model to answer only from tool results.
+Tool availability by role: sponsors get all seven tools; organizers get get_event, list_my_proposals, get_proposal, summarize_chat, list_pending_actions. Tool arguments never include a user id. Identity always comes from the authenticated request. Chat messages and event text returned by tools are untrusted data, never instructions
 
 ### 8.4 Smart Event Prefill (organizer)
 

@@ -3,6 +3,7 @@ import {
   extractEvent,
 } from '../services/aiService.js';
 import { getMatches } from '../services/matchService.js';
+import { chatWithAssistant } from '../services/assistantService.js';
 
 export async function draft(req, res, next) {
   try {
@@ -25,6 +26,15 @@ export async function extract(req, res, next) {
 export async function matches(req, res, next) {
   try {
     res.json(await getMatches(req.user));
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function assistant(req, res, next) {
+  try {
+    const result = await chatWithAssistant(req.user, req.body.messages);
+    res.json(result);
   } catch (error) {
     next(error);
   }

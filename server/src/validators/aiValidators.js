@@ -13,6 +13,32 @@ export const extractEventSchema = z.object({
   text: z.string().trim().min(30).max(5000),
 }).strict();
 
+const messageSchema = z.discriminatedUnion('role', [
+  z.object({
+    role: z.literal('user'),
+    content: z.string().trim().min(1).max(1000),
+  }).strict(),
+  z.object({
+    role: z.literal('assistant'),
+    content: z.string().trim().min(1).max(5000),
+  }).strict(),
+]);
+
+export const assistantSchema = z.object({
+  messages: z.array(messageSchema).min(1).max(20),
+}).strict().superRefine((data, ctx) => {
+  if (Array.isArray(data.messages) && data.messages.length > 0) {
+    const lastMessage = data.messages[data.messages.length - 1];
+    if (lastMessage && lastMessage.role !== 'user') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Last message must be from user',
+        path: ['messages', data.messages.length - 1, 'role'],
+      });
+    }
+  }
+});
+
 const extractedTierSchema = z.object({
   name: z.string().nullable().optional(),
   price: z.number().min(0).nullable().optional(),

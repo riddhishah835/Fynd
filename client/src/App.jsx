@@ -13,6 +13,7 @@ import SponsorDashboard from './pages/SponsorDashboard.jsx';
 import Proposals from './pages/Proposals.jsx';
 import ProposalDetail from './pages/ProposalDetail.jsx';
 import Notifications from './pages/Notifications.jsx';
+import Assistant from './pages/Assistant.jsx';
 
 export default function App() {
   return (
@@ -92,6 +93,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Notifications />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/assistant"
+            element={
+              <ProtectedRoute>
+                <Assistant />
               </ProtectedRoute>
             }
           />
