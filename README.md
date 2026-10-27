@@ -6,7 +6,7 @@
 >
 > - **Live app:** https://fynd-nu.vercel.app/
 > - **API:** https://fynd-wbz6.onrender.com/api/health
-> - **Demo video:** 
+> - **Demo video:** https://drive.google.com/file/d/1yHE1IdJ5i-tvvwCKu0MkLKuC8uUMl61l/view?usp=sharing
 
 ## Problem Statement
 
