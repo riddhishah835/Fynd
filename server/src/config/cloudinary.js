@@ -63,3 +63,45 @@ export function uploadBanner(buffer) {
     }
   });
 }
+
+export function uploadProof(buffer) {
+  if (!cloudinaryConfigured) {
+    throw new AppError('SERVER_ERROR', 'File uploads are not configured');
+  }
+  if (!Buffer.isBuffer(buffer) || buffer.length === 0) {
+    throw new AppError('VALIDATION_ERROR', 'A non-empty proof file is required');
+  }
+
+  return new Promise((resolve, reject) => {
+    try {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'fynd/proofs', resource_type: 'auto' },
+        (error, result) => {
+          if (error) {
+            console.error('Cloudinary proof upload failed:', {
+              message: error.message,
+              http_code: error.http_code,
+              name: error.name,
+            });
+            reject(new AppError('SERVER_ERROR', 'File upload failed'));
+            return;
+          }
+
+          if (!result?.secure_url) {
+            reject(new AppError('SERVER_ERROR', 'File upload failed'));
+            return;
+          }
+          resolve(result.secure_url);
+        },
+      );
+      stream.end(buffer);
+    } catch (error) {
+      console.error('Cloudinary proof upload failed:', {
+        message: error.message,
+        http_code: error.http_code,
+        name: error.name,
+      });
+      reject(new AppError('SERVER_ERROR', 'File upload failed'));
+    }
+  });
+}

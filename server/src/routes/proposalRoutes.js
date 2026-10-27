@@ -2,6 +2,7 @@ import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { config } from '../config/env.js';
 import { create as createMessage, list as listMessages } from '../controllers/messageController.js';
+import { listForProposal as listDeliverables } from '../controllers/deliverableController.js';
 import {
   create,
   get,
@@ -46,6 +47,12 @@ router.get(
   validate(proposalIdParamSchema, 'params'),
   validate(listMessagesQuerySchema, 'query'),
   listMessages,
+);
+router.get(
+  '/:id/deliverables',
+  requireAuth,
+  validate(proposalIdParamSchema, 'params'),
+  listDeliverables,
 );
 router.post(
   '/:id/messages',

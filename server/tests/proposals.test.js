@@ -291,14 +291,14 @@ describe('proposal routes and transitions', () => {
     expect(updatedEvent.tiers.id(event.tiers[0]._id).slotsFilled).toBe(1);
   });
 
-  it('releases accepted slots and deletes deliverables when withdrawn', async () => {
+  it('releases accepted slots and retains locked deliverables when withdrawn', async () => {
     const event = await createPublishedEvent();
     const proposal = await submitProposal(sponsorA, event);
     await transition(organizer, proposal.body.proposal._id, 'accepted');
 
     const withdrawn = await transition(sponsorA, proposal.body.proposal._id, 'withdrawn');
     expect(withdrawn.status).toBe(200);
-    expect(await Deliverable.countDocuments({ proposal: proposal.body.proposal._id })).toBe(0);
+    expect(await Deliverable.countDocuments({ proposal: proposal.body.proposal._id })).toBe(2);
     const updatedEvent = await Event.findById(event._id);
     expect(updatedEvent.tiers.id(event.tiers[0]._id).slotsFilled).toBe(0);
   });

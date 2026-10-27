@@ -170,6 +170,7 @@ Statuses: `pending`, `countered`, `accepted`, `rejected`, `withdrawn`, `complete
 | `countered` | `pending` | Sponsor | Sponsor re-counters with a new amount |
 | `accepted` | `completed` | Organizer | Allowed only when all deliverables are `approved` |
 | `accepted` | `withdrawn` | Either party | Decrements `slotsFilled` |
+Deliverable states: pending → delivered (organizer; requires a proof file or a note) → approved or disputed (sponsor; dispute requires a note). disputed → delivered (organizer re-delivers). approved is terminal. Deliverables can only be changed while the proposal is accepted; they are locked once it is completed, withdrawn or rejected.
 
 Implementation requirements:
 

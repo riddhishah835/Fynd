@@ -4,6 +4,7 @@ import api from '../api/axios.js';
 import Empty from '../components/Empty.jsx';
 import ErrorBox from '../components/ErrorBox.jsx';
 import ChatPanel from '../components/ChatPanel.jsx';
+import DeliverablesPanel from '../components/DeliverablesPanel.jsx';
 import Loader from '../components/Loader.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -121,6 +122,9 @@ export default function ProposalDetail() {
   }
 
   const showTransitionForm = Boolean(formType);
+  const deliverables = proposal.deliverables ?? [];
+  const allDeliverablesApproved = deliverables.length > 0
+    && deliverables.every(({ status }) => status === 'approved');
 
   return (
     <article className="space-y-6">
@@ -245,14 +249,23 @@ export default function ProposalDetail() {
           {proposal.status === 'accepted' && (
             <>
               {user.role === 'organizer' && (
-                <button
-                  className="rounded bg-blue-700 px-3 py-2 text-sm text-white disabled:opacity-50"
-                  disabled={submitting}
-                  onClick={() => submitTransition('completed')}
-                  type="button"
-                >
-                  Mark completed
-                </button>
+                <div className={`rounded p-2 ${
+                  allDeliverablesApproved ? 'bg-green-50 ring-2 ring-green-300' : ''
+                }`}>
+                  <button
+                    className="rounded bg-blue-700 px-3 py-2 text-sm text-white disabled:opacity-50"
+                    disabled={submitting}
+                    onClick={() => submitTransition('completed')}
+                    type="button"
+                  >
+                    Mark completed
+                  </button>
+                  {allDeliverablesApproved && (
+                    <p className="mt-2 text-sm text-green-800">
+                      All deliverables approved, you can mark this deal as completed
+                    </p>
+                  )}
+                </div>
               )}
               <button
                 className="rounded border border-red-300 px-3 py-2 text-sm text-red-700 disabled:opacity-50"
@@ -341,22 +354,7 @@ export default function ProposalDetail() {
       </section>
 
       {['accepted', 'completed'].includes(proposal.status) && (
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Deliverables</h2>
-          {proposal.deliverables.length === 0 ? (
-            <Empty message="No deliverables" />
-          ) : (
-            <ul className="space-y-2">
-              {proposal.deliverables.map((deliverable) => (
-                <li className="flex items-center justify-between rounded border border-gray-200 bg-white p-3" key={deliverable._id}>
-                  <span>{deliverable.title}</span>
-                  <StatusBadge status={deliverable.status} />
-                </li>
-              ))}
-            </ul>
-          )}
-          {/* Interactive deliverables workflow will be built in a later milestone. */}
-        </section>
+        <DeliverablesPanel proposal={proposal} onChanged={loadProposal} />
       )}
 
       <ChatPanel proposalId={id} />

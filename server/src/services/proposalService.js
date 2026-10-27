@@ -261,7 +261,6 @@ export async function transitionProposal({ proposalId, actor, toStatus, payload 
 
   if (fromStatus === 'accepted' && toStatus === 'withdrawn') {
     await releaseTierSlot(proposal);
-    await Deliverable.deleteMany({ proposal: proposal._id });
   }
 
   const otherParty = otherPartyId(proposal, actor);
